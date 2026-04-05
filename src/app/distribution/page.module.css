@@ -51,18 +51,18 @@
 .title {
   margin-top: 14px;
   font-family: var(--serif);
-  font-size: clamp(3.3rem, 8.2vw, 7.2rem);
-  line-height: 0.92;
-  letter-spacing: -0.05em;
+  font-size: clamp(3.4rem, 8.4vw, 7.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
   max-width: 10ch;
 }
 
 .intro {
   margin-top: 24px;
-  max-width: 62ch;
+  max-width: 66ch;
   font-size: clamp(1.03rem, 1.36vw, 1.12rem);
   line-height: 1.9;
-  color: rgba(247, 244, 238, 0.74);
+  color: rgba(247, 244, 238, 0.76);
 }
 
 .notes {
@@ -93,44 +93,74 @@
   color: rgba(247, 244, 238, 0.82);
 }
 
-.mediaBreak,
-.mediaBreakAlt {
-  display: grid;
-  gap: 18px;
-  margin: 10px 0;
+.fullBleedMedia,
+.fullBleedMediaAlt {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   padding: 28px 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
-.mediaGlyph {
-  width: 100%;
-  min-height: 320px;
-  border-radius: 2px;
-  background:
-    radial-gradient(circle at 50% 44%, rgba(247,244,238,0.16), transparent 20%),
-    linear-gradient(135deg, rgba(247,244,238,0.06), rgba(247,244,238,0.02)),
-    #0b0b0b;
+.mediaGlyph,
+.mediaPanel {
+  position: relative;
+  width: min(100%, 1600px);
+  margin: 0 auto;
+  overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(247,244,238,0.05);
+}
+
+.mediaGlyph {
+  min-height: min(58svh, 720px);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(247,244,238,0.18), transparent 18%),
+    radial-gradient(circle at 30% 28%, rgba(247,244,238,0.05), transparent 26%),
+    linear-gradient(135deg, rgba(247,244,238,0.07), rgba(247,244,238,0.015)),
+    #0b0b0b;
 }
 
 .mediaPanel {
-  width: 100%;
-  min-height: 250px;
+  min-height: min(44svh, 520px);
   background:
-    linear-gradient(160deg, rgba(247,244,238,0.12), rgba(247,244,238,0.025)),
+    linear-gradient(160deg, rgba(247,244,238,0.1), rgba(247,244,238,0.025)),
     #080808;
-  box-shadow: inset 0 0 0 1px rgba(247,244,238,0.05);
 }
 
-.mediaBreak p,
-.mediaBreakAlt p {
-  max-width: 34ch;
+.mediaOverlay {
+  position: absolute;
+  inset: auto auto 28px 28px;
+  max-width: 22ch;
+  display: grid;
+  gap: 12px;
+}
+
+.mediaOverlay span {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 238, 0.56);
+}
+
+.mediaOverlay p,
+.mediaPanel p {
+  max-width: 22ch;
   font-family: var(--serif);
-  font-size: clamp(1.6rem, 3vw, 3rem);
+  font-size: clamp(1.5rem, 3vw, 3rem);
   line-height: 0.98;
   letter-spacing: -0.04em;
   color: var(--ink);
+}
+
+.pullQuote {
+  max-width: 13ch;
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4.6vw, 4.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  padding: 14px 0 4px;
 }
 
 @media (max-width: 980px) {
@@ -149,5 +179,9 @@
 @media (max-width: 720px) {
   .notes {
     grid-template-columns: 1fr;
+  }
+
+  .mediaOverlay {
+    inset: auto 18px 18px 18px;
   }
 }

@@ -2,9 +2,11 @@ import Link from 'next/link'
 import styles from './page.module.css'
 
 const notes = [
-  'Revenue scale matters because distribution is now a capital allocation problem, not just a channel problem.',
-  'Messaggerie Italiane sits inside a legacy of operational rigor that still maps cleanly to modern infrastructure thinking.',
-  'Consumer AI changes discovery, but distribution still decides who gets seen, when, and at what cost.'
+  'Messaggerie Italiane gives the thesis a real operating backbone: distribution as infrastructure, not decoration.',
+  '€800m revenue scale changes the conversation. Distribution becomes a capital allocation discipline, not a channel tactic.',
+  '61M units a year implies systems thinking: forecasting, routing, inventory, and service levels have to stay in sync.',
+  'The Kadokawa joint venture points to a future where distribution is both regional and platform-native.',
+  'Consumer AI does not remove the need for distribution. It raises the value of selective, trusted placement.'
 ]
 
 export default function DistributionPage() {
@@ -20,10 +22,10 @@ export default function DistributionPage() {
           <p className={styles.kicker}>Longform editorial</p>
           <h1 className={styles.title}>The future of the distribution layer is quiet, expensive, and decisive.</h1>
           <p className={styles.intro}>
-            Michele Mauri operates at the intersection of distribution infrastructure, revenue scale,
-            and consumer AI. This draft frames the distribution layer as a strategic system: one that
-            moves value efficiently, protects quality, and keeps the surface area of complexity out of
-            the user’s way.
+            Michele Mauri sits inside a rare operating context: shareholder in Messaggerie Italiane,
+            a business system shaped by €800m revenue, 61M units a year, and a joint venture with
+            Kadokawa. That makes distribution legible as something larger than logistics. It is the
+            layer where product, capital, trust, and timing all meet.
           </p>
         </div>
 
@@ -35,41 +37,69 @@ export default function DistributionPage() {
 
         <div className={styles.column}>
           <p>
-            In a market shaped by high-volume media flows and software-native discovery, distribution
-            is no longer a background function. It is the mechanism that decides whether attention is
-            converted into durable value. At €800m scale, every decision downstream becomes visible in
-            margin, velocity, and market position.
+            In the old model, distribution was what happened after the important decisions were made.
+            In the new model, it is the place where the important decisions are tested. Every route,
+            every ranking, every partner choice reveals whether the system is built for scale or merely
+            for movement.
           </p>
           <p>
-            The Messaggerie Italiane context matters because it gives distribution a physical memory:
-            contracts, logistics, schedules, and the discipline required to move complex inventories
-            through real systems. That legacy translates directly into modern platform design, where the
-            challenge is not simply reach, but reliable orchestration.
+            Messaggerie Italiane matters because it anchors the conversation in real operating weight.
+            It is a context where inventory, service levels, and commercial relationships are not
+            abstract. They are measured, negotiated, and maintained with precision. That discipline is
+            exactly what consumer AI will demand from its distribution layer.
           </p>
-          <div className={styles.mediaBreak}>
-            <div className={styles.mediaGlyph} />
-            <p>Distribution is the hidden interface between quality and scale.</p>
+
+          <div className={styles.fullBleedMedia} aria-label="Full-bleed editorial media break">
+            <div className={styles.mediaGlyph}>
+              <div className={styles.mediaOverlay}>
+                <span>distribution as infrastructure</span>
+                <p>High-trust systems move quietly, but they move everything.</p>
+              </div>
+            </div>
           </div>
+
           <p>
-            Consumer AI changes the front end, but not the need for robust routing, ranking, and
-            relationship design underneath. The best systems will feel almost invisible: curated, fast,
-            and strangely calm. That is the new luxury in infrastructure.
+            At 61M units a year, the underlying logic is obvious: scale only matters if it is legible.
+            The future distribution layer will belong to teams that can orchestrate inventory, demand,
+            and intelligence in one continuous motion, without forcing the user to feel the machinery.
           </p>
           <p>
-            For Michele, the work is to make the layer legible without making it loud. The best
-            distribution strategy does not ask for attention; it earns trust through precision.
+            The Kadokawa joint venture adds an important dimension. It suggests that the next phase of
+            distribution is not only domestic or linear. It is increasingly cross-market, cross-format,
+            and culturally negotiated. That is where the strategic edge lives: in deciding how content
+            and commerce should travel across ecosystems without losing value.
           </p>
-          <div className={styles.mediaBreakAlt}>
-            <div className={styles.mediaPanel} />
-            <p>
-              Placeholder media break for an image, a data strip, or a short film still that marks a
-              shift in the essay’s rhythm.
-            </p>
+          <p>
+            Consumer AI raises the bar for all of this. Discovery becomes more personalized, but trust
+            becomes more scarce. The winners will not simply be the fastest or largest. They will be the
+            operators who can place value with restraint, preserve quality, and make the system feel
+            almost inevitable.
+          </p>
+
+          <div className={styles.pullQuote}>
+            Distribution is no longer the back office of attention. It is the architecture of
+            credibility.
           </div>
+
           <p>
-            The next generation of distribution will reward those who can combine operational rigor,
-            product judgment, and a clear understanding of how content or commerce should surface in
-            an AI-shaped environment.
+            In that environment, Michele's background matters because it blends capital discipline,
+            operating memory, and future-facing product judgment. The work is not to make distribution
+            louder. It is to make it more exact.
+          </p>
+
+          <div className={styles.fullBleedMediaAlt} aria-label="Second full-bleed editorial media break">
+            <div className={styles.mediaPanel}>
+              <p>
+                Placeholder for a full-bleed image or video sequence that marks a shift in the essay.
+              </p>
+            </div>
+          </div>
+
+          <p>
+            In consumer AI, the distribution layer will increasingly decide what gets amplified,
+            what gets filtered, and what gets protected from noise. That is a high-status problem
+            because it is ultimately a problem of judgment. The future belongs to systems that know
+            where to place attention, and when to leave it alone.
           </p>
         </div>
       </article>
