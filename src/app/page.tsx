@@ -1,27 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { AnimatePresence, LayoutGroup, motion, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useRef, useState } from 'react'
+import ParticleMorphScene from '../components/ParticleMorphScene'
 import styles from './page.module.css'
 
 function BeatMark({ label }: { label: string }) {
   return <p className={styles.beatLabel}>{label}</p>
-}
-
-const thesisPaths = {
-  left: [
-    'M125 342C145 236 255 170 372 188C448 199 494 245 510 301C523 350 493 392 432 417C354 449 233 452 168 410C126 383 114 369 125 342Z',
-    'M206 316C229 225 306 183 392 184C476 185 541 227 552 299C562 364 532 430 445 454C360 478 249 452 208 386C187 352 197 338 206 316Z',
-  ],
-  right: [
-    'M1077 342C1057 236 947 170 830 188C754 199 708 245 692 301C679 350 709 392 770 417C848 449 969 452 1034 410C1076 383 1088 369 1077 342Z',
-    'M994 316C971 225 894 183 808 184C724 185 659 227 648 299C638 364 668 430 755 454C840 478 951 452 992 386C1013 352 1003 338 994 316Z',
-  ],
-  center: [
-    'M392 352C392 265 458 208 550 195C639 182 727 205 808 254C885 300 912 364 889 421C865 480 792 516 709 522C619 529 542 504 483 465C420 423 392 394 392 352Z',
-    'M408 348C408 266 466 224 542 208C628 190 721 205 798 252C866 294 893 357 878 410C859 476 795 520 715 529C626 539 546 513 492 474C434 432 408 395 408 348Z',
-  ],
 }
 
 const triadCaption = ['Flow', 'Scale', 'Intelligence'] as const
@@ -59,11 +45,6 @@ export default function HomePage() {
     mass: 0.7,
   })
   const heroOpacity = useTransform(scrollYProgress, [0, 0.14, 0.22], [1, 0.88, 0.55])
-
-  const thesisGlow = useTransform(thesisProgress, [0, 1], [0.7, 1])
-  const triadGlow = useTransform(triadProgress, [0, 1], [0.72, 1])
-
-  const caption = triadCaption[triadStage]
 
   return (
     <main ref={pageRef} className={styles.page}>
@@ -106,67 +87,7 @@ export default function HomePage() {
             <h2>The Thesis</h2>
             <p>Identity and infrastructure, one anchor.</p>
           </div>
-
-          <div className={styles.thesisScene}>
-            <svg className={styles.sceneSvg} viewBox="0 0 1200 700" role="img" aria-label="Morphing thesis form">
-              <defs>
-                <filter id="thesisGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                  <feColorMatrix
-                    in="blur"
-                    mode="matrix"
-                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-                    result="goo"
-                  />
-                  <feMerge>
-                    <feMergeNode in="goo" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <motion.g filter="url(#thesisGlow)">
-                <motion.path
-                  d={thesisPaths.left[thesisStage]}
-                  animate={{ d: thesisPaths.left[thesisStage] }}
-                  transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-                  fill="rgba(247,244,238,0.04)"
-                  stroke="rgba(247,244,238,0.18)"
-                  strokeWidth="1.2"
-                />
-                <motion.path
-                  d={thesisPaths.right[thesisStage]}
-                  animate={{ d: thesisPaths.right[thesisStage] }}
-                  transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-                  fill="rgba(247,244,238,0.04)"
-                  stroke="rgba(247,244,238,0.18)"
-                  strokeWidth="1.2"
-                />
-                <motion.path
-                  d={thesisPaths.center[thesisStage]}
-                  animate={{ d: thesisPaths.center[thesisStage] }}
-                  transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-                  fill="rgba(247,244,238,0.03)"
-                  stroke="rgba(247,244,238,0.28)"
-                  strokeWidth="1.4"
-                />
-                <motion.path
-                  d={
-                    thesisStage
-                      ? 'M470 350C520 330 673 330 729 350'
-                      : 'M190 350C300 312 403 305 487 332M713 332C799 305 900 312 1010 350'
-                  }
-                  animate={{ opacity: thesisStage ? 1 : 0.7 }}
-                  transition={{ duration: 0.9, ease: 'easeOut' }}
-                  fill="none"
-                  stroke="rgba(247,244,238,0.34)"
-                  strokeLinecap="round"
-                  strokeWidth="1.2"
-                />
-              </motion.g>
-            </svg>
-            <div className={styles.thesisPulse} />
-          </div>
+          <ParticleMorphScene mode="thesis" stage={thesisStage} stageLabels={['Identity', 'Distribution']} />
         </div>
       </section>
 
@@ -175,124 +96,9 @@ export default function HomePage() {
           <div className={styles.beatMeta}>
             <BeatMark label="Beat 2" />
             <h2>The Triad</h2>
-            <p>{caption}</p>
+            <p>{triadCaption[triadStage]}</p>
           </div>
-
-          <div className={styles.triadScene}>
-            <svg className={styles.sceneSvg} viewBox="0 0 1200 700" role="img" aria-label="Morphing triad form">
-              <defs>
-                <filter id="goo" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
-                  <feColorMatrix
-                    in="blur"
-                    mode="matrix"
-                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"
-                    result="goo"
-                  />
-                  <feMerge>
-                    <feMergeNode in="goo" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <motion.g filter="url(#goo)">
-                <motion.path
-                  d={
-                    triadStage === 0
-                      ? 'M160 350C250 295 320 293 410 350C320 407 250 405 160 350Z'
-                      : triadStage === 1
-                        ? 'M365 210C410 190 445 188 490 210C453 269 417 283 365 258C350 242 350 226 365 210Z'
-                        : 'M335 246C392 184 442 170 505 202C485 266 435 312 368 303C327 297 314 271 335 246Z'
-                  }
-                  style={{ opacity: triadGlow, scale: triadStage === 1 ? 0.9 : 1 }}
-                  transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-                  fill="rgba(247,244,238,0.05)"
-                  stroke="rgba(247,244,238,0.18)"
-                  strokeWidth="1.1"
-                />
-                <motion.path
-                  d={
-                    triadStage === 0
-                      ? 'M520 350C595 304 660 300 742 350C662 403 597 404 520 350Z'
-                      : triadStage === 1
-                        ? 'M531 316C579 272 640 272 689 316C651 363 606 374 531 353C510 338 510 327 531 316Z'
-                        : 'M541 343C597 285 649 281 715 314C690 384 642 424 570 418C524 413 509 378 541 343Z'
-                  }
-                  style={{ opacity: triadGlow, scale: triadStage === 1 ? 1.02 : 1 }}
-                  transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-                  fill="rgba(247,244,238,0.06)"
-                  stroke="rgba(247,244,238,0.2)"
-                  strokeWidth="1.2"
-                />
-                <motion.path
-                  d={
-                    triadStage === 0
-                      ? 'M790 350C880 293 950 295 1040 350C950 405 880 407 790 350Z'
-                      : triadStage === 1
-                        ? 'M728 290C775 270 812 271 857 291C836 352 799 372 747 354C725 338 723 310 728 290Z'
-                        : 'M784 264C845 186 912 186 980 255C948 316 892 357 826 349C768 341 742 304 784 264Z'
-                  }
-                  style={{ opacity: triadGlow, scale: triadStage === 1 ? 0.96 : 1 }}
-                  transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-                  fill="rgba(247,244,238,0.05)"
-                  stroke="rgba(247,244,238,0.18)"
-                  strokeWidth="1.1"
-                />
-                <motion.path
-                  d={
-                    triadStage === 2
-                      ? 'M432 250C514 308 605 332 768 250'
-                      : 'M220 350C406 335 513 330 994 350'
-                  }
-                  style={{ opacity: triadStage === 2 ? 1 : 0.72 }}
-                  transition={{ duration: 0.85, ease: 'easeOut' }}
-                  fill="none"
-                  stroke="rgba(247,244,238,0.22)"
-                  strokeLinecap="round"
-                  strokeWidth="1.1"
-                />
-                <motion.circle
-                  cx={triadStage === 0 ? 300 : triadStage === 1 ? 420 : 370}
-                  cy={triadStage === 0 ? 350 : triadStage === 1 ? 230 : 255}
-                  r={triadStage === 0 ? 54 : triadStage === 1 ? 34 : 40}
-                  style={{ opacity: triadGlow }}
-                  transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-                  fill="rgba(247,244,238,0.18)"
-                />
-                <motion.circle
-                  cx={triadStage === 0 ? 600 : triadStage === 1 ? 610 : 590}
-                  cy={triadStage === 0 ? 350 : triadStage === 1 ? 345 : 350}
-                  r={triadStage === 0 ? 60 : triadStage === 1 ? 78 : 50}
-                  style={{ opacity: triadGlow, scale: triadStage === 1 ? 1.1 : 1 }}
-                  transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-                  fill="rgba(247,244,238,0.24)"
-                />
-                <motion.circle
-                  cx={triadStage === 0 ? 900 : triadStage === 1 ? 780 : 870}
-                  cy={triadStage === 0 ? 350 : triadStage === 1 ? 465 : 300}
-                  r={triadStage === 0 ? 54 : triadStage === 1 ? 42 : 42}
-                  style={{ opacity: triadGlow, scale: triadStage === 1 ? 1.1 : 1 }}
-                  transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
-                  fill="rgba(247,244,238,0.18)"
-                />
-              </motion.g>
-            </svg>
-            <div className={styles.triadCaptionRow}>
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={caption}
-                  initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                  className={styles.triadStageLabel}
-                >
-                  {caption}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-          </div>
+          <ParticleMorphScene mode="triad" stage={triadStage} stageLabels={triadCaption} />
         </div>
       </section>
 
