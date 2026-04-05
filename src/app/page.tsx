@@ -48,9 +48,6 @@ export default function HomePage() {
       </header>
 
       <section className={styles.hero}>
-        <div className={styles.globeStage} aria-hidden="true">
-          <ParticleGlobe />
-        </div>
         <motion.div className={styles.heroVisual} aria-hidden="true" style={{ y: heroY }}>
           <div className={styles.signalField} />
           <motion.div className={styles.heroOrb} style={{ scale: heroScale }} />
@@ -75,6 +72,9 @@ export default function HomePage() {
       </section>
 
       <section className={styles.beatSection}>
+        <div className={styles.beatGlobeStage} aria-hidden="true">
+          <ParticleGlobe />
+        </div>
         <BeatMark label="Beat 1" />
         <div className={styles.beatLayout}>
           <motion.div className={styles.thesisMark} style={{ scale: thesisScale, y: thesisY }} aria-hidden="true">
