@@ -67,7 +67,7 @@ export default function DistributionPage() {
             <motion.div className={styles.mediaFrame} style={{ y: posterY }}>
               <div className={styles.mediaImageA} />
             </motion.div>
-            <p style={{ opacity: captionOpacity }}>Distribution as infrastructure.</p>
+            <motion.p style={{ opacity: captionOpacity }}>Distribution as infrastructure.</motion.p>
           </div>
 
           <p>
