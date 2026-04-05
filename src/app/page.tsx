@@ -6,45 +6,49 @@ import { useRef, useState } from 'react'
 import ParticleMorphScene from '../components/ParticleMorphScene'
 import styles from './page.module.css'
 
-function BeatMark({ label }: { label: string }) {
-  return <p className={styles.beatLabel}>{label}</p>
-}
+const stageLabels = [
+  'Personal Identity',
+  'Infrastructure',
+  'Flow',
+  'Scale',
+  'Intelligence',
+] as const
 
-const triadCaption = ['Flow', 'Scale', 'Intelligence'] as const
+const stageNotes = [
+  'A single self holding shape.',
+  'Systems, rails, and connective tissue.',
+  'Velocity without friction.',
+  'Density that reads as scale.',
+  'Adaptive intelligence emerging from the field.',
+] as const
 
 export default function HomePage() {
   const pageRef = useRef<HTMLElement | null>(null)
-  const thesisRef = useRef<HTMLElement | null>(null)
-  const triadRef = useRef<HTMLElement | null>(null)
-
+  const systemRef = useRef<HTMLElement | null>(null)
   const { scrollYProgress } = useScroll({ target: pageRef, offset: ['start start', 'end end'] })
-  const { scrollYProgress: thesisProgress } = useScroll({ target: thesisRef, offset: ['start center', 'end center'] })
-  const { scrollYProgress: triadProgress } = useScroll({ target: triadRef, offset: ['start center', 'end center'] })
+  const { scrollYProgress: systemProgress } = useScroll({ target: systemRef, offset: ['start start', 'end end'] })
 
-  const [thesisStage, setThesisStage] = useState(0)
-  const [triadStage, setTriadStage] = useState(0)
+  const [stage, setStage] = useState(0)
 
-  useMotionValueEvent(thesisProgress, 'change', (latest) => {
-    setThesisStage(latest > 0.5 ? 1 : 0)
+  useMotionValueEvent(systemProgress, 'change', (latest) => {
+    if (latest < 0.18) setStage(0)
+    else if (latest < 0.36) setStage(1)
+    else if (latest < 0.58) setStage(2)
+    else if (latest < 0.8) setStage(3)
+    else setStage(4)
   })
 
-  useMotionValueEvent(triadProgress, 'change', (latest) => {
-    if (latest < 0.34) setTriadStage(0)
-    else if (latest < 0.68) setTriadStage(1)
-    else setTriadStage(2)
-  })
-
-  const heroScale = useSpring(useTransform(scrollYProgress, [0, 0.18], [1.08, 0.82]), {
+  const heroScale = useSpring(useTransform(scrollYProgress, [0, 0.25], [1.08, 0.95]), {
     stiffness: 120,
-    damping: 26,
-    mass: 0.7,
+    damping: 24,
+    mass: 0.75,
   })
-  const heroY = useSpring(useTransform(scrollYProgress, [0, 0.22], [0, -70]), {
+  const heroY = useSpring(useTransform(scrollYProgress, [0, 0.3], [0, -40]), {
     stiffness: 120,
-    damping: 26,
-    mass: 0.7,
+    damping: 24,
+    mass: 0.75,
   })
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.14, 0.22], [1, 0.88, 0.55])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2, 0.35], [1, 0.92, 0.7])
 
   return (
     <main ref={pageRef} className={styles.page}>
@@ -57,72 +61,39 @@ export default function HomePage() {
       </header>
 
       <section className={styles.hero}>
-        <motion.div className={styles.heroVisual} aria-hidden="true" style={{ y: heroY }}>
-          <div className={styles.signalField} />
-          <motion.div className={styles.heroOrb} style={{ scale: heroScale, opacity: heroOpacity }} />
-          <div className={styles.nodeA} />
-          <div className={styles.nodeB} />
-          <div className={styles.nodeC} />
+        <motion.div className={styles.heroInner} style={{ y: heroY, scale: heroScale, opacity: heroOpacity }}>
+          <p className={styles.kicker}>One system. Five states.</p>
+          <h1 className={styles.headline}>Supercharged particle architecture.</h1>
+          <p className={styles.dek}>
+            A single oversized canvas that mutates from personal identity to infrastructure, flow,
+            scale, and intelligence without breaking the visual field.
+          </p>
+          <div className={styles.legend} aria-label="Morph states">
+            {stageLabels.map((label, index) => (
+              <span key={label} className={index === stage ? styles.legendActive : undefined}>
+                {label}
+              </span>
+            ))}
+          </div>
         </motion.div>
+      </section>
 
-        <div className={styles.heroInner}>
-          <p className={styles.kicker}>Michele Mauri</p>
-          <motion.h1 className={styles.headline} style={{ scale: heroScale, y: heroY, opacity: heroOpacity }}>
-            Michele Mauri
-          </motion.h1>
-          <p className={styles.dek}>Distribution and consumer AI.</p>
-          <div className={styles.actions}>
-            <Link className={styles.actionPrimary} href="/distribution">
-              Enter
-            </Link>
-            <span className={styles.actionSecondary}>Scroll</span>
+      <section ref={systemRef} className={styles.systemSection}>
+        <div className={styles.systemSticky}>
+          <div className={styles.systemMeta}>
+            <p className={styles.systemLabel}>Mauri HQ distribution layer</p>
+            <h2>{stageLabels[stage]}</h2>
+            <p>{stageNotes[stage]}</p>
           </div>
+          <ParticleMorphScene stage={stage} stageLabels={stageLabels} />
         </div>
       </section>
 
-      <section ref={thesisRef} className={styles.beatSection}>
-        <div className={styles.beatSticky}>
-          <div className={styles.beatMeta}>
-            <BeatMark label="Beat 1" />
-            <h2>The Thesis</h2>
-            <p>Identity and infrastructure, one anchor.</p>
-          </div>
-          <ParticleMorphScene mode="thesis" stage={thesisStage} stageLabels={['Identity', 'Distribution']} />
-        </div>
-      </section>
-
-      <section ref={triadRef} className={styles.beatSection}>
-        <div className={styles.beatSticky}>
-          <div className={styles.beatMeta}>
-            <BeatMark label="Beat 2" />
-            <h2>The Triad</h2>
-            <p>{triadCaption[triadStage]}</p>
-          </div>
-          <ParticleMorphScene mode="triad" stage={triadStage} stageLabels={triadCaption} />
-        </div>
-      </section>
-
-      <section className={styles.beatSectionShort}>
-        <div className={styles.beatSticky}>
-          <div className={styles.beatMetaCompact}>
-            <BeatMark label="Beat 3" />
-            <p>Distribution and consumer AI turn selection into value.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.beatSectionShort}>
-        <div className={styles.beatSticky}>
-          <div className={styles.entryPanel}>
-            <div className={styles.entryVisual} aria-hidden="true">
-              <div className={styles.entryGlow} />
-              <div className={styles.entryPath} />
-            </div>
-            <Link className={styles.entryLink} href="/distribution">
-              Enter Distribution
-            </Link>
-          </div>
-        </div>
+      <section className={styles.outro}>
+        <p>
+          The field stays bone and ivory on dark, but the motion should feel overworked, expensive,
+          and alive.
+        </p>
       </section>
     </main>
   )
