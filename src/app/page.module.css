@@ -23,15 +23,16 @@
 .kicker,
 .actionPrimary,
 .actionSecondary,
-.heroFooter span {
+.beatLabel,
+.entryLink {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-size: 0.68rem;
 }
 
 .brand,
-.heroFooter span {
-  color: rgba(247, 244, 238, 0.68);
+.beatLabel {
+  color: rgba(247, 244, 238, 0.56);
 }
 
 .nav {
@@ -51,12 +52,21 @@
   transform: translateY(-1px);
 }
 
-.hero {
+.hero,
+.beatSection {
   position: relative;
-  min-height: 100svh;
   overflow: hidden;
   display: grid;
   place-items: center;
+}
+
+.hero {
+  min-height: 100svh;
+}
+
+.beatSection {
+  min-height: 100svh;
+  padding: 10svh 0;
 }
 
 .heroVisual {
@@ -73,27 +83,17 @@
     radial-gradient(circle at 78% 34%, rgba(247, 244, 238, 0.06), transparent 18%),
     radial-gradient(circle at 50% 70%, rgba(247, 244, 238, 0.05), transparent 26%),
     linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%, transparent 76%, rgba(255,255,255,0.02));
-  filter: blur(0.2px);
 }
 
-.orbitLarge,
-.orbitSmall {
+.heroOrb {
   position: absolute;
   inset: 50% auto auto 50%;
-  border: 1px solid rgba(247, 244, 238, 0.08);
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-}
-
-.orbitLarge {
   width: min(72vw, 920px);
   height: min(72vw, 920px);
-}
-
-.orbitSmall {
-  width: min(38vw, 480px);
-  height: min(38vw, 480px);
-  border-color: rgba(247, 244, 238, 0.12);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(247, 244, 238, 0.1);
+  box-shadow: inset 0 0 120px rgba(247, 244, 238, 0.03);
 }
 
 .nodeA,
@@ -171,22 +171,220 @@
   border: 1px solid rgba(247, 244, 238, 0.12);
 }
 
-.heroFooter {
-  position: absolute;
-  left: 50%;
-  bottom: 22px;
-  z-index: 1;
+.beatLabel {
+  margin-bottom: 18px;
+}
+
+.beatLayout {
   width: min(1440px, calc(100vw - 40px));
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.thesisMark {
+  position: relative;
+  min-height: 64svh;
+  display: grid;
+  place-items: center;
+}
+
+.thesisRing,
+.thesisCore {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.thesisRing {
+  width: min(74vw, 880px);
+  height: min(74vw, 880px);
+  border: 1px solid rgba(247, 244, 238, 0.1);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.08), transparent 24%),
+    radial-gradient(circle at 28% 30%, rgba(247,244,238,0.05), transparent 16%),
+    linear-gradient(135deg, rgba(247,244,238,0.04), rgba(247,244,238,0.015));
+}
+
+.thesisCore {
+  width: 9px;
+  height: 9px;
+  background: rgba(247, 244, 238, 0.94);
+  box-shadow: 0 0 40px rgba(247, 244, 238, 0.4);
+}
+
+.beatCopy {
+  justify-self: start;
+  max-width: 18ch;
+}
+
+.beatCopy h2,
+.bridgeBlock p,
+.entryLink {
+  font-family: var(--serif);
+  letter-spacing: -0.05em;
+}
+
+.beatCopy h2 {
+  font-size: clamp(2.5rem, 5.5vw, 5.2rem);
+  line-height: 0.92;
+}
+
+.beatCopy p {
+  margin-top: 16px;
+  color: rgba(247, 244, 238, 0.72);
+  font-size: clamp(1rem, 1.25vw, 1.08rem);
+  line-height: 1.7;
+}
+
+.triadGrid {
+  width: min(1440px, calc(100vw - 40px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.triadCard {
+  min-height: 52svh;
+  padding: 22px;
+  border-top: 1px solid rgba(247, 244, 238, 0.08);
+  border-bottom: 1px solid rgba(247, 244, 238, 0.08);
+  display: grid;
+  align-content: end;
+  gap: 12px;
+}
+
+.triadGlyph,
+.triadGlyphAlt,
+.triadGlyphThird {
+  height: 220px;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.triadGlyph {
+  background:
+    linear-gradient(180deg, rgba(247,244,238,0.05), transparent),
+    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.12), transparent 28%),
+    #080808;
+}
+
+.triadGlyphAlt {
+  background:
+    linear-gradient(135deg, rgba(247,244,238,0.08), transparent 40%),
+    radial-gradient(circle at 65% 30%, rgba(247,244,238,0.08), transparent 18%),
+    #090909;
+}
+
+.triadGlyphThird {
+  background:
+    linear-gradient(160deg, rgba(247,244,238,0.1), transparent 45%),
+    radial-gradient(circle at 30% 70%, rgba(247,244,238,0.08), transparent 18%),
+    #070707;
+}
+
+.triadCard h3 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.triadCard p {
+  color: rgba(247, 244, 238, 0.64);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.bridgeBlock {
+  width: min(1440px, calc(100vw - 40px));
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.bridgeLine {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247,244,238,0.22), transparent);
+}
+
+.bridgeBlock p {
+  max-width: 16ch;
+  font-size: clamp(2.2rem, 4.6vw, 4.8rem);
+  line-height: 0.96;
+  color: var(--ink);
+}
+
+.entryBlock {
+  width: min(1440px, calc(100vw - 40px));
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+}
+
+.entryVisual {
+  position: relative;
+  width: 100%;
+  min-height: 54svh;
+  overflow: hidden;
+  border-top: 1px solid rgba(247, 244, 238, 0.08);
+  border-bottom: 1px solid rgba(247, 244, 238, 0.08);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(247,244,238,0.1), transparent 18%),
+    radial-gradient(circle at 20% 72%, rgba(247,244,238,0.05), transparent 16%),
+    linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%, transparent 76%, rgba(255,255,255,0.02));
+}
+
+.entryGlow {
+  position: absolute;
+  inset: 14% 10%;
+  border: 1px solid rgba(247, 244, 238, 0.1);
+  border-radius: 999px;
+}
+
+.entryPath {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(130deg, transparent 44%, rgba(247,244,238,0.08) 50%, transparent 56%),
+    linear-gradient(180deg, transparent 62%, rgba(247,244,238,0.05) 64%, transparent 66%);
+}
+
+.entryLink {
+  color: var(--ink);
+  border-bottom: 1px solid rgba(247, 244, 238, 0.22);
+  padding-bottom: 6px;
+}
+
+@media (max-width: 980px) {
+  .beatLayout,
+  .triadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .beatCopy {
+    max-width: 22ch;
+  }
+
+  .triadCard {
+    min-height: 38svh;
+  }
 }
 
 @media (max-width: 820px) {
   .topbar,
   .heroInner,
-  .heroFooter {
+  .beatLayout,
+  .triadGrid,
+  .bridgeBlock,
+  .entryBlock {
     width: min(100vw - 28px, 1440px);
   }
 
@@ -195,13 +393,8 @@
     font-size: clamp(4rem, 16vw, 6.6rem);
   }
 
-  .orbitLarge {
+  .thesisRing {
     width: 120vw;
     height: 120vw;
-  }
-
-  .orbitSmall {
-    width: 66vw;
-    height: 66vw;
   }
 }
