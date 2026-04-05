@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { LayoutGroup, motion, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useRef, useState } from 'react'
 import styles from './page.module.css'
 
 function BeatMark({ label }: { label: string }) {
@@ -11,7 +11,25 @@ function BeatMark({ label }: { label: string }) {
 
 export default function HomePage() {
   const pageRef = useRef<HTMLElement | null>(null)
+  const thesisRef = useRef<HTMLElement | null>(null)
+  const triadRef = useRef<HTMLElement | null>(null)
+
   const { scrollYProgress } = useScroll({ target: pageRef, offset: ['start start', 'end end'] })
+  const { scrollYProgress: thesisProgress } = useScroll({ target: thesisRef, offset: ['start center', 'end center'] })
+  const { scrollYProgress: triadProgress } = useScroll({ target: triadRef, offset: ['start center', 'end center'] })
+
+  const [thesisStage, setThesisStage] = useState(0)
+  const [triadStage, setTriadStage] = useState(0)
+
+  useMotionValueEvent(thesisProgress, 'change', (latest) => {
+    setThesisStage(latest > 0.52 ? 1 : 0)
+  })
+
+  useMotionValueEvent(triadProgress, 'change', (latest) => {
+    if (latest < 0.34) setTriadStage(0)
+    else if (latest < 0.68) setTriadStage(1)
+    else setTriadStage(2)
+  })
 
   const heroScale = useSpring(useTransform(scrollYProgress, [0, 0.18], [1.08, 0.82]), {
     stiffness: 120,
@@ -25,16 +43,10 @@ export default function HomePage() {
   })
   const heroOpacity = useTransform(scrollYProgress, [0, 0.14, 0.22], [1, 0.88, 0.55])
 
-  const thesisScale = useTransform(scrollYProgress, [0.1, 0.38], [0.94, 1.08])
-  const thesisY = useTransform(scrollYProgress, [0.1, 0.38], [40, -40])
+  const thesisGlow = useTransform(thesisProgress, [0, 1], [0.75, 1])
+  const triadGlow = useTransform(triadProgress, [0, 1], [0.8, 1])
 
-  const triadFlow = useTransform(scrollYProgress, [0.34, 0.58], [0.18, 1])
-  const triadScale = useTransform(scrollYProgress, [0.38, 0.62], [0.18, 1])
-  const triadIntel = useTransform(scrollYProgress, [0.42, 0.66], [0.18, 1])
-
-  const bridgeOpacity = useTransform(scrollYProgress, [0.62, 0.78], [0.1, 1])
-  const entryY = useTransform(scrollYProgress, [0.72, 1], [100, 0])
-  const entryOpacity = useTransform(scrollYProgress, [0.72, 0.88, 1], [0.1, 0.75, 1])
+  const triadCaption = ['Flow', 'Scale', 'Intelligence'][triadStage]
 
   return (
     <main ref={pageRef} className={styles.page}>
@@ -49,7 +61,7 @@ export default function HomePage() {
       <section className={styles.hero}>
         <motion.div className={styles.heroVisual} aria-hidden="true" style={{ y: heroY }}>
           <div className={styles.signalField} />
-          <motion.div className={styles.heroOrb} style={{ scale: heroScale }} />
+          <motion.div className={styles.heroOrb} style={{ scale: heroScale, opacity: heroOpacity }} />
           <div className={styles.nodeA} />
           <div className={styles.nodeB} />
           <div className={styles.nodeC} />
@@ -70,60 +82,105 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={styles.beatSection}>
-        <BeatMark label="Beat 1" />
-        <div className={styles.beatLayout}>
-          <motion.div className={styles.thesisMark} style={{ scale: thesisScale, y: thesisY }} aria-hidden="true">
-            <div className={styles.thesisRing} />
-            <div className={styles.thesisCore} />
-          </motion.div>
-          <div className={styles.beatCopy}>
+      <section ref={thesisRef} className={styles.beatSection}>
+        <div className={styles.beatSticky}>
+          <div className={styles.beatMeta}>
+            <BeatMark label="Beat 1" />
             <h2>The Thesis</h2>
-            <p>Distribution is the visible edge of value.</p>
+            <p>Identity and infrastructure, one anchor.</p>
+          </div>
+
+          <LayoutGroup id="thesis-morph">
+            <div className={styles.thesisScene}>
+              <motion.div
+                layoutId="thesis-left"
+                className={thesisStage ? styles.thesisLeftMerged : styles.thesisLeft}
+                style={{ opacity: thesisGlow }}
+              />
+              <motion.div
+                layoutId="thesis-right"
+                className={thesisStage ? styles.thesisRightMerged : styles.thesisRight}
+                style={{ opacity: thesisGlow }}
+              />
+              <motion.div
+                layoutId="thesis-anchor"
+                className={thesisStage ? styles.thesisAnchorMerged : styles.thesisAnchor}
+                style={{ scale: thesisStage ? 1 : 0.82, opacity: thesisGlow }}
+              />
+            </div>
+          </LayoutGroup>
+        </div>
+      </section>
+
+      <section ref={triadRef} className={styles.beatSection}>
+        <div className={styles.beatSticky}>
+          <div className={styles.beatMeta}>
+            <BeatMark label="Beat 2" />
+            <h2>The Triad</h2>
+            <p>{triadCaption}</p>
+          </div>
+
+          <LayoutGroup id="triad-morph">
+            <div className={styles.triadScene}>
+              <motion.div
+                layoutId="triad-a"
+                className={
+                  triadStage === 0
+                    ? styles.triadAFlow
+                    : triadStage === 1
+                      ? styles.triadAScale
+                      : styles.triadAIntel
+                }
+                style={{ opacity: triadGlow }}
+              />
+              <motion.div
+                layoutId="triad-b"
+                className={
+                  triadStage === 0
+                    ? styles.triadBFlow
+                    : triadStage === 1
+                      ? styles.triadBScale
+                      : styles.triadBIntel
+                }
+                style={{ opacity: triadGlow }}
+              />
+              <motion.div
+                layoutId="triad-c"
+                className={
+                  triadStage === 0
+                    ? styles.triadCFlow
+                    : triadStage === 1
+                      ? styles.triadCScale
+                      : styles.triadCIntel
+                }
+                style={{ opacity: triadGlow }}
+              />
+            </div>
+          </LayoutGroup>
+        </div>
+      </section>
+
+      <section className={styles.beatSectionShort}>
+        <div className={styles.beatSticky}>
+          <div className={styles.beatMetaCompact}>
+            <BeatMark label="Beat 3" />
+            <p>Distribution and consumer AI turn selection into value.</p>
           </div>
         </div>
       </section>
 
-      <section className={styles.beatSection}>
-        <BeatMark label="Beat 2" />
-        <div className={styles.triadGrid}>
-          <motion.div className={styles.triadCard} style={{ opacity: triadFlow }}>
-            <div className={styles.triadGlyph} />
-            <h3>Flow</h3>
-            <p>Move cleanly.</p>
-          </motion.div>
-          <motion.div className={styles.triadCard} style={{ opacity: triadScale }}>
-            <div className={styles.triadGlyphAlt} />
-            <h3>Scale</h3>
-            <p>Stay legible.</p>
-          </motion.div>
-          <motion.div className={styles.triadCard} style={{ opacity: triadIntel }}>
-            <div className={styles.triadGlyphThird} />
-            <h3>Intelligence</h3>
-            <p>Place with judgment.</p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className={styles.beatSection}>
-        <BeatMark label="Beat 3" />
-        <motion.div className={styles.bridgeBlock} style={{ opacity: bridgeOpacity }}>
-          <div className={styles.bridgeLine} />
-          <p>Distribution and consumer AI turn selection into value.</p>
-        </motion.div>
-      </section>
-
-      <section className={styles.beatSection}>
-        <BeatMark label="Beat 4" />
-        <motion.div className={styles.entryBlock} style={{ y: entryY, opacity: entryOpacity }}>
-          <div className={styles.entryVisual} aria-hidden="true">
-            <div className={styles.entryGlow} />
-            <div className={styles.entryPath} />
+      <section className={styles.beatSectionShort}>
+        <div className={styles.beatSticky}>
+          <div className={styles.entryPanel}>
+            <div className={styles.entryVisual} aria-hidden="true">
+              <div className={styles.entryGlow} />
+              <div className={styles.entryPath} />
+            </div>
+            <Link className={styles.entryLink} href="/distribution">
+              Enter Distribution
+            </Link>
           </div>
-          <Link className={styles.entryLink} href="/distribution">
-            Enter Distribution
-          </Link>
-        </motion.div>
+        </div>
       </section>
     </main>
   )

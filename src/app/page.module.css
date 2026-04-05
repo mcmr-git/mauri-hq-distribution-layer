@@ -53,20 +53,24 @@
 }
 
 .hero,
-.beatSection {
+.beatSection,
+.beatSectionShort {
   position: relative;
-  overflow: hidden;
   display: grid;
   place-items: center;
 }
 
 .hero {
   min-height: 100svh;
+  overflow: hidden;
 }
 
 .beatSection {
-  min-height: 100svh;
-  padding: 10svh 0;
+  min-height: 128svh;
+}
+
+.beatSectionShort {
+  min-height: 88svh;
 }
 
 .heroVisual {
@@ -171,168 +175,215 @@
   border: 1px solid rgba(247, 244, 238, 0.12);
 }
 
-.beatLabel {
-  margin-bottom: 18px;
-}
-
-.beatLayout {
+.beatSticky {
   width: min(1440px, calc(100vw - 40px));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
-  gap: 28px;
-  align-items: center;
+  gap: 22px;
+  padding: 14svh 0 8svh;
+  align-self: start;
+  position: sticky;
+  top: 12svh;
 }
 
-.thesisMark {
-  position: relative;
-  min-height: 64svh;
+.beatMeta,
+.beatMetaCompact {
   display: grid;
-  place-items: center;
+  gap: 8px;
 }
 
-.thesisRing,
-.thesisCore {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.thesisRing {
-  width: min(74vw, 880px);
-  height: min(74vw, 880px);
-  border: 1px solid rgba(247, 244, 238, 0.1);
-  background:
-    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.08), transparent 24%),
-    radial-gradient(circle at 28% 30%, rgba(247,244,238,0.05), transparent 16%),
-    linear-gradient(135deg, rgba(247,244,238,0.04), rgba(247,244,238,0.015));
-}
-
-.thesisCore {
-  width: 9px;
-  height: 9px;
-  background: rgba(247, 244, 238, 0.94);
-  box-shadow: 0 0 40px rgba(247, 244, 238, 0.4);
-}
-
-.beatCopy {
-  justify-self: start;
-  max-width: 18ch;
-}
-
-.beatCopy h2,
-.bridgeBlock p,
-.entryLink {
+.beatMeta h2 {
   font-family: var(--serif);
+  font-size: clamp(2.6rem, 5.8vw, 5.6rem);
+  line-height: 0.92;
   letter-spacing: -0.05em;
 }
 
-.beatCopy h2 {
-  font-size: clamp(2.5rem, 5.5vw, 5.2rem);
-  line-height: 0.92;
-}
-
-.beatCopy p {
-  margin-top: 16px;
+.beatMeta p,
+.beatMetaCompact p {
+  max-width: 30ch;
   color: rgba(247, 244, 238, 0.72);
   font-size: clamp(1rem, 1.25vw, 1.08rem);
   line-height: 1.7;
 }
 
-.triadGrid {
-  width: min(1440px, calc(100vw - 40px));
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.triadCard {
-  min-height: 52svh;
-  padding: 22px;
+.thesisScene,
+.triadScene {
+  position: relative;
+  min-height: min(58svh, 680px);
   border-top: 1px solid rgba(247, 244, 238, 0.08);
   border-bottom: 1px solid rgba(247, 244, 238, 0.08);
-  display: grid;
-  align-content: end;
-  gap: 12px;
-}
-
-.triadGlyph,
-.triadGlyphAlt,
-.triadGlyphThird {
-  height: 220px;
-  border-radius: 2px;
-  position: relative;
   overflow: hidden;
 }
 
-.triadGlyph {
-  background:
-    linear-gradient(180deg, rgba(247,244,238,0.05), transparent),
-    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.12), transparent 28%),
-    #080808;
+.thesisLeft,
+.thesisRight,
+.thesisAnchor,
+.thesisLeftMerged,
+.thesisRightMerged,
+.thesisAnchorMerged,
+.triadAFlow,
+.triadBFlow,
+.triadCFlow,
+.triadAScale,
+.triadBScale,
+.triadCScale,
+.triadAIntel,
+.triadBIntel,
+.triadCIntel {
+  position: absolute;
+  border-radius: 999px;
+  transform-origin: center;
 }
 
-.triadGlyphAlt {
+.thesisLeft,
+.thesisRight,
+.thesisLeftMerged,
+.thesisRightMerged {
+  width: min(28vw, 360px);
+  height: min(16vw, 180px);
   background:
-    linear-gradient(135deg, rgba(247,244,238,0.08), transparent 40%),
-    radial-gradient(circle at 65% 30%, rgba(247,244,238,0.08), transparent 18%),
+    linear-gradient(135deg, rgba(247,244,238,0.1), rgba(247,244,238,0.02)),
     #090909;
+  border: 1px solid rgba(247, 244, 238, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(247, 244, 238, 0.04);
 }
 
-.triadGlyphThird {
+.thesisLeft {
+  top: 24%;
+  left: 8%;
+}
+
+.thesisRight {
+  top: 58%;
+  right: 8%;
+}
+
+.thesisLeftMerged {
+  top: 36%;
+  left: 19%;
+}
+
+.thesisRightMerged {
+  top: 36%;
+  right: 19%;
+}
+
+.thesisAnchor,
+.thesisAnchorMerged {
+  width: min(26vw, 320px);
+  height: min(26vw, 320px);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(247, 244, 238, 0.12);
   background:
-    linear-gradient(160deg, rgba(247,244,238,0.1), transparent 45%),
-    radial-gradient(circle at 30% 70%, rgba(247,244,238,0.08), transparent 18%),
-    #070707;
+    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.15), transparent 28%),
+    rgba(247,244,238,0.02);
+  backdrop-filter: blur(1px);
 }
 
-.triadCard h3 {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.8rem);
-  line-height: 0.96;
-  letter-spacing: -0.05em;
+.thesisAnchor::after,
+.thesisAnchorMerged::after {
+  content: '';
+  position: absolute;
+  inset: 26%;
+  border-radius: 50%;
+  background: rgba(247, 244, 238, 0.92);
+  filter: blur(0.2px);
+  box-shadow: 0 0 40px rgba(247, 244, 238, 0.28);
 }
 
-.triadCard p {
-  color: rgba(247, 244, 238, 0.64);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+.triadAFlow,
+.triadBFlow,
+.triadCFlow,
+.triadAScale,
+.triadBScale,
+.triadCScale,
+.triadAIntel,
+.triadBIntel,
+.triadCIntel {
+  width: min(18vw, 180px);
+  height: min(18vw, 180px);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.15), transparent 28%),
+    rgba(247,244,238,0.03);
+  border: 1px solid rgba(247, 244, 238, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(247, 244, 238, 0.03);
 }
 
-.bridgeBlock {
-  width: min(1440px, calc(100vw - 40px));
-  margin: 0 auto;
-  display: grid;
-  gap: 16px;
-  justify-items: start;
+.triadAFlow {
+  left: 10%;
+  top: 44%;
+  transform: translateY(-50%);
 }
 
-.bridgeLine {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(247,244,238,0.22), transparent);
+.triadBFlow {
+  left: 38%;
+  top: 44%;
+  transform: translateY(-50%);
 }
 
-.bridgeBlock p {
-  max-width: 16ch;
-  font-size: clamp(2.2rem, 4.6vw, 4.8rem);
-  line-height: 0.96;
-  color: var(--ink);
+.triadCFlow {
+  right: 10%;
+  top: 44%;
+  transform: translateY(-50%);
 }
 
-.entryBlock {
-  width: min(1440px, calc(100vw - 40px));
-  margin: 0 auto;
+.triadAScale {
+  left: 50%;
+  top: 18%;
+  transform: translateX(-50%);
+}
+
+.triadBScale {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(22vw, 240px);
+  height: min(22vw, 240px);
+}
+
+.triadCScale {
+  left: 50%;
+  top: 82%;
+  transform: translateX(-50%);
+}
+
+.triadAIntel {
+  left: 18%;
+  top: 22%;
+}
+
+.triadBIntel {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(14vw, 150px);
+  height: min(14vw, 150px);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(247,244,238,0.34), transparent 26%),
+    rgba(247,244,238,0.04);
+}
+
+.triadCIntel {
+  right: 18%;
+  bottom: 22%;
+}
+
+.beatSectionShort .beatSticky {
+  padding-top: 10svh;
+}
+
+.entryPanel {
   display: grid;
   gap: 20px;
-  justify-items: start;
 }
 
 .entryVisual {
   position: relative;
   width: 100%;
-  min-height: 54svh;
+  min-height: 46svh;
   overflow: hidden;
   border-top: 1px solid rgba(247, 244, 238, 0.08);
   border-bottom: 1px solid rgba(247, 244, 238, 0.08);
@@ -361,30 +412,13 @@
   color: var(--ink);
   border-bottom: 1px solid rgba(247, 244, 238, 0.22);
   padding-bottom: 6px;
-}
-
-@media (max-width: 980px) {
-  .beatLayout,
-  .triadGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .beatCopy {
-    max-width: 22ch;
-  }
-
-  .triadCard {
-    min-height: 38svh;
-  }
+  width: fit-content;
 }
 
 @media (max-width: 820px) {
   .topbar,
   .heroInner,
-  .beatLayout,
-  .triadGrid,
-  .bridgeBlock,
-  .entryBlock {
+  .beatSticky {
     width: min(100vw - 28px, 1440px);
   }
 
@@ -393,8 +427,40 @@
     font-size: clamp(4rem, 16vw, 6.6rem);
   }
 
-  .thesisRing {
+  .heroOrb {
     width: 120vw;
     height: 120vw;
+  }
+
+  .thesisScene,
+  .triadScene {
+    min-height: 48svh;
+  }
+
+  .thesisLeft,
+  .thesisRight,
+  .thesisLeftMerged,
+  .thesisRightMerged {
+    width: 44vw;
+    height: 24vw;
+  }
+
+  .thesisAnchor,
+  .thesisAnchorMerged {
+    width: 42vw;
+    height: 42vw;
+  }
+
+  .triadAFlow,
+  .triadBFlow,
+  .triadCFlow,
+  .triadAScale,
+  .triadBScale,
+  .triadCScale,
+  .triadAIntel,
+  .triadBIntel,
+  .triadCIntel {
+    width: 24vw;
+    height: 24vw;
   }
 }
