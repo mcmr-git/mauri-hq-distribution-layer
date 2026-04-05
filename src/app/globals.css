@@ -12,26 +12,24 @@
 }
 
 :root {
-  --bg: #050505;
-  --paper: #f2efe8;
-  --ink: #f7f4ee;
-  --muted: rgba(247, 244, 238, 0.62);
-  --soft: rgba(247, 244, 238, 0.08);
-  --soft-2: rgba(247, 244, 238, 0.14);
-  --line: rgba(247, 244, 238, 0.09);
-  --line-2: rgba(247, 244, 238, 0.18);
+  --bg: #000000;
+  --fg: rgba(255, 255, 255, 0.95);
+  --muted: rgba(255, 255, 255, 0.52);
+  --muted-2: rgba(255, 255, 255, 0.22);
+  --line: rgba(255, 255, 255, 0.08);
+  --soft-line: rgba(255, 255, 255, 0.05);
   --serif: 'Exposure', Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 html, body {
   width: 100%;
   background: var(--bg);
-  color: var(--ink);
+  color: var(--fg);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -40,6 +38,11 @@ html, body {
 
 body {
   min-height: 100vh;
+  overflow-y: auto;
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 a {
@@ -49,17 +52,4 @@ a {
 
 button {
   font: inherit;
-}
-
-::selection {
-  background: rgba(247, 244, 238, 0.18);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
 }
