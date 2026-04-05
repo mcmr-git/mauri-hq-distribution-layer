@@ -4,39 +4,66 @@ import { useEffect, useRef } from 'react'
 import styles from './ParticleGlobe.module.css'
 
 interface Particle {
-  x: number
-  y: number
-  z: number
   ox: number
   oy: number
   oz: number
+  x: number
+  y: number
+  z: number
   vx: number
   vy: number
   vz: number
   size: number
   baseAlpha: number
+  seed: number
+}
+
+interface Projection {
+  sx: number
+  sy: number
+  scale: number
+  depth: number
 }
 
 const TWO_PI = Math.PI * 2
-const PARTICLE_COUNT = 2200
-const GLOBE_RADIUS = 0.36 // fraction of min(w,h)
-const REPULSE_RADIUS = 0.14 // fraction of globe radius * viewport min
-const REPULSE_STRENGTH = 0.018
-const RETURN_STRENGTH = 0.04
-const DAMPING = 0.82
-const ROTATION_SPEED = 0.0012
-const TILT = 0.28 // radians — slight axial tilt
+const GRID_X = 11
+const GRID_Y = 10
+const GRID_Z = 20
+const PARTICLE_COUNT = GRID_X * GRID_Y * GRID_Z
+const LATTICE_RADIUS_X = 0.4
+const LATTICE_RADIUS_Y = 0.28
+const LATTICE_RADIUS_Z = 0.4
+const NODE_SPACING = 1
+const REPULSE_RADIUS = 0.13
+const REPULSE_STRENGTH = 0.017
+const RETURN_STRENGTH = 0.038
+const DAMPING = 0.83
+const ROTATION_SPEED = 0.00115
+const TILT = 0.24
+const LATTICE_WAVE = 0.018
 
-function fibonacci_sphere(n: number): [number, number, number][] {
-  const pts: [number, number, number][] = []
-  const golden = Math.PI * (3 - Math.sqrt(5))
-  for (let i = 0; i < n; i++) {
-    const y = 1 - (i / (n - 1)) * 2
-    const r = Math.sqrt(1 - y * y)
-    const theta = golden * i
-    pts.push([Math.cos(theta) * r, y, Math.sin(theta) * r])
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
+
+function rotY(x: number, z: number, a: number) {
+  return {
+    rx: x * Math.cos(a) - z * Math.sin(a),
+    rz: x * Math.sin(a) + z * Math.cos(a),
   }
-  return pts
+}
+
+function rotX(y: number, z: number, a: number) {
+  return {
+    ry: y * Math.cos(a) - z * Math.sin(a),
+    rz: y * Math.sin(a) + z * Math.cos(a),
+  }
+}
+
+function project(x: number, y: number, z: number, cx: number, cy: number) {
+  const fov = 920
+  const scale = fov / (fov + z)
+  return { sx: cx + x * scale, sy: cy + y * scale, scale, depth: z }
 }
 
 export default function ParticleGlobe() {
@@ -44,7 +71,6 @@ export default function ParticleGlobe() {
   const stateRef = useRef({
     angle: 0,
     mouse: { x: -9999, y: -9999 },
-    touching: false,
     particles: [] as Particle[],
     raf: 0,
   })
@@ -52,100 +78,112 @@ export default function ParticleGlobe() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d')!
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
     const state = stateRef.current
 
-    // ── resize ─────────────────���────────────────────────
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = window.innerWidth * dpr
-      canvas.height = window.innerHeight * dpr
-      canvas.style.width = window.innerWidth + 'px'
-      canvas.style.height = window.innerHeight + 'px'
-      ctx.scale(dpr, dpr)
-      buildParticles()
-    }
-
-    // ── build particles ─────────────────────────────────
     const buildParticles = () => {
       const W = window.innerWidth
       const H = window.innerHeight
-      const R = Math.min(W, H) * GLOBE_RADIUS
-      const pts = fibonacci_sphere(PARTICLE_COUNT)
-      state.particles = pts.map(([px, py, pz]) => ({
-        ox: px * R, oy: py * R, oz: pz * R,
-        x: px * R, y: py * R, z: pz * R,
-        vx: 0, vy: 0, vz: 0,
-        // vary size slightly with latitude for texture
-        size: 1.15 + Math.abs(py) * 0.6,
-        baseAlpha: 0.55 + Math.random() * 0.45,
-      }))
+      const R = Math.min(W, H)
+      const particles: Particle[] = []
+
+      for (let zi = 0; zi < GRID_Z; zi++) {
+        for (let yi = 0; yi < GRID_Y; yi++) {
+          for (let xi = 0; xi < GRID_X; xi++) {
+            const nx = xi / (GRID_X - 1) - 0.5
+            const ny = yi / (GRID_Y - 1) - 0.5
+            const nz = zi / (GRID_Z - 1) - 0.5
+            const rowShift = yi % 2 === 0 ? 0.018 : -0.018
+            const layerShift = zi % 2 === 0 ? 0.016 : -0.016
+            const bandShift = xi % 2 === 0 ? 0.012 : -0.012
+            const warp = Math.sin((xi + yi * 1.7 + zi * 0.8) * 0.7) * 0.01
+            const ox = (nx + rowShift + warp) * R * LATTICE_RADIUS_X
+            const oy = (ny + layerShift - warp * 0.6) * R * LATTICE_RADIUS_Y
+            const oz = (nz + bandShift + warp * 0.8) * R * LATTICE_RADIUS_Z
+
+            particles.push({
+              ox,
+              oy,
+              oz,
+              x: ox,
+              y: oy,
+              z: oz,
+              vx: 0,
+              vy: 0,
+              vz: 0,
+              size: 0.8 + (1 - Math.abs(ny)) * 0.52 + Math.random() * 0.4,
+              baseAlpha: 0.42 + Math.random() * 0.48,
+              seed: Math.random() * Math.PI * 2,
+            })
+          }
+        }
+      }
+
+      state.particles = particles
     }
 
-    // ── project ─────────────────────────────────────────
-    const project = (x: number, y: number, z: number, cx: number, cy: number) => {
-      const fov = 900
-      const scale = fov / (fov + z)
-      return { sx: cx + x * scale, sy: cy + y * scale, scale }
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1
+      canvas.width = Math.floor(window.innerWidth * dpr)
+      canvas.height = Math.floor(window.innerHeight * dpr)
+      canvas.style.width = window.innerWidth + 'px'
+      canvas.style.height = window.innerHeight + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      buildParticles()
     }
 
-    // ── rotate on Y axis ────────────────────────────────
-    const rotY = (x: number, z: number, a: number) => ({
-      rx: x * Math.cos(a) - z * Math.sin(a),
-      rz: x * Math.sin(a) + z * Math.cos(a),
-    })
-
-    // ── rotate on X axis (tilt) ─────────────────────────
-    const rotX = (y: number, z: number, a: number) => ({
-      ry: y * Math.cos(a) - z * Math.sin(a),
-      rz: y * Math.sin(a) + z * Math.cos(a),
-    })
-
-    // ── draw ────────────────────────────────────────────
     const draw = () => {
       const W = window.innerWidth
       const H = window.innerHeight
       const cx = W / 2
       const cy = H / 2
+      const minSide = Math.min(W, H)
       const mx = state.mouse.x
       const my = state.mouse.y
-      const R = Math.min(W, H) * GLOBE_RADIUS
-      const repR = R * REPULSE_RADIUS * 2.2
+      const repR = minSide * REPULSE_RADIUS
 
       ctx.clearRect(0, 0, W, H)
       state.angle += ROTATION_SPEED
 
-      // sort back-to-front for depth
-      const sorted = state.particles.slice().sort((a, b) => {
-        const az = rotY(a.x, a.z, state.angle).rz
-        const bz = rotY(b.x, b.z, state.angle).rz
-        return az - bz
-      })
+      const particles = state.particles
+      const projections: Projection[] = new Array(particles.length)
 
-      for (const p of sorted) {
-        // apply auto-rotation to origin position
-        const { rx: ox2, rz: oz2 } = rotY(p.ox, p.oz, state.angle)
-        const { ry: oy2, rz: oz3 } = rotX(p.oy, oz2, TILT)
+      ctx.save()
+      ctx.fillStyle = '#f0ece4'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
 
-        // repulsion from cursor
-        const proj = project(ox2, oy2, oz3, cx, cy)
-        const dx = proj.sx - mx
-        const dy = proj.sy - my
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        const { rx: tx0, rz: tz0 } = rotY(p.ox, p.oz, state.angle)
+        const { ry: ty0, rz: tz1 } = rotX(p.oy, tz0, TILT)
+
+        const wave = Math.sin(state.angle * 1.55 + p.seed + p.ox * 0.02 + p.oy * 0.03 + p.oz * 0.025)
+        const twist = Math.cos(state.angle * 1.2 + p.seed * 0.7 + p.oy * 0.02)
+        const tx = tx0 + wave * minSide * LATTICE_WAVE
+        const ty = ty0 + twist * minSide * LATTICE_WAVE * 0.72
+        const tz = tz1 + Math.sin(state.angle * 1.1 + p.seed) * minSide * LATTICE_WAVE * 0.55
+
+        const projTarget = project(tx, ty, tz, cx, cy)
+        const dx = projTarget.sx - mx
+        const dy = projTarget.sy - my
         const dist = Math.sqrt(dx * dx + dy * dy)
 
         if (dist < repR) {
           const force = (1 - dist / repR) * REPULSE_STRENGTH
-          // push in screen-space, mapped back through projection
-          p.vx += (dx / dist) * force * R * 0.5
-          p.vy += (dy / dist) * force * R * 0.5
+          const safe = Math.max(0.0001, dist)
+          p.vx += (dx / safe) * force * minSide * 0.26
+          p.vy += (dy / safe) * force * minSide * 0.26
+          p.vz += ((wave + twist) * 0.5) * force * minSide * 0.08
         }
 
-        // spring return to orbit
-        p.vx += (0 - p.x) * RETURN_STRENGTH
-        p.vy += (0 - p.y) * RETURN_STRENGTH
-        p.vz += (0 - p.z) * RETURN_STRENGTH
+        p.vx += (tx - p.x) * RETURN_STRENGTH
+        p.vy += (ty - p.y) * RETURN_STRENGTH
+        p.vz += (tz - p.z) * RETURN_STRENGTH
 
-        // integrate
         p.vx *= DAMPING
         p.vy *= DAMPING
         p.vz *= DAMPING
@@ -153,37 +191,76 @@ export default function ParticleGlobe() {
         p.y += p.vy * 0.016 * 60
         p.z += p.vz * 0.016 * 60
 
-        // rotated current position
-        const { rx, rz: rz1 } = rotY(p.x + ox2 - p.ox, p.z + oz3 - p.oz, 0)
-        const finalX = rx + ox2
-        const finalY = p.y + oy2 - p.oy + oy2
-        const finalZ = rz1 + oz3
+        const proj = project(p.x, p.y, p.z, cx, cy)
+        projections[i] = proj
+      }
 
-        const { sx, sy, scale } = project(ox2 + (p.x - p.ox) * 0.3, oy2 + (p.y - p.oy) * 0.3, oz3, cx, cy)
+      // draw lattice mesh first
+      for (let zi = 0; zi < GRID_Z; zi++) {
+        for (let yi = 0; yi < GRID_Y; yi++) {
+          for (let xi = 0; xi < GRID_X; xi++) {
+            const index = xi + GRID_X * (yi + GRID_Y * zi)
+            const a = projections[index]
+            if (!a) continue
 
-        // depth-based alpha and size
-        const depthT = (oz3 / R + 1) * 0.5 // 0 = back, 1 = front
-        const alpha = p.baseAlpha * (0.18 + depthT * 0.82)
-        const sz = p.size * scale * (0.55 + depthT * 0.65)
+            const links: number[] = []
+            if (xi < GRID_X - 1) links.push(index + 1)
+            if (yi < GRID_Y - 1) links.push(index + GRID_X)
+            if (zi < GRID_Z - 1) links.push(index + GRID_X * GRID_Y)
+            if ((xi + yi + zi) % 3 === 0 && xi < GRID_X - 1 && yi < GRID_Y - 1) {
+              links.push(index + 1 + GRID_X)
+            }
 
-        // proximity glow
-        const proximity = Math.max(0, 1 - dist / (repR * 1.8))
-        const glowAlpha = alpha + proximity * 0.55
+            for (const linkIndex of links) {
+              const b = projections[linkIndex]
+              if (!b) continue
+              const depthMix = clamp((a.depth + b.depth) / (minSide * LATTICE_RADIUS_Z * 1.8) * 0.5 + 0.5, 0, 1)
+              const mouseMix = clamp(
+                1 - Math.min(
+                  Math.hypot(a.sx - mx, a.sy - my),
+                  Math.hypot(b.sx - mx, b.sy - my),
+                ) / (repR * 2.2),
+                0,
+                1,
+              )
+              ctx.globalAlpha = 0.03 + depthMix * 0.12 + mouseMix * 0.09
+              ctx.lineWidth = 0.45 + depthMix * 0.45
+              ctx.beginPath()
+              ctx.moveTo(a.sx, a.sy)
+              ctx.lineTo(b.sx, b.sy)
+              ctx.stroke()
+            }
+          }
+        }
+      }
+
+      // draw nodes back-to-front
+      const sorted = particles
+        .map((particle, index) => ({ particle, index }))
+        .sort((a, b) => projections[a.index].depth - projections[b.index].depth)
+
+      for (const item of sorted) {
+        const proj = projections[item.index]
+        const p = item.particle
+        const depthT = clamp((proj.depth / (minSide * LATTICE_RADIUS_Z) + 1) * 0.5, 0, 1)
+        const alpha = p.baseAlpha * (0.2 + depthT * 0.86)
+        const proximity = Math.max(0, 1 - Math.hypot(proj.sx - mx, proj.sy - my) / (repR * 1.9))
+        const glowAlpha = alpha + proximity * 0.45
+        const sz = p.size * proj.scale * (0.56 + depthT * 0.64)
 
         ctx.beginPath()
-        ctx.arc(sx, sy, Math.max(0.3, sz), 0, TWO_PI)
-
-        // pure white — proximity boosts alpha only, no colour shift
+        ctx.arc(proj.sx, proj.sy, Math.max(0.28, sz), 0, TWO_PI)
         ctx.fillStyle = proximity > 0.05
           ? `rgba(255, 255, 255, ${glowAlpha})`
           : `rgba(255, 255, 255, ${alpha})`
         ctx.fill()
       }
 
+      ctx.globalAlpha = 1
+      ctx.restore()
       state.raf = requestAnimationFrame(draw)
     }
 
-    // ── pointer events ───────────────────────────────────
     const onMove = (e: MouseEvent) => {
       state.mouse.x = e.clientX
       state.mouse.y = e.clientY
@@ -221,11 +298,5 @@ export default function ParticleGlobe() {
     }
   }, [])
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className={styles.canvas}
-      aria-label="Interactive particle globe"
-    />
-  )
+  return <canvas ref={canvasRef} className={styles.canvas} aria-label="Interactive particle globe" />
 }
