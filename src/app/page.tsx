@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useRef } from 'react'
+import ParticleGlobe from '../components/ParticleGlobe'
 import styles from './page.module.css'
 
 function BeatMark({ label }: { label: string }) {
@@ -47,6 +48,9 @@ export default function HomePage() {
       </header>
 
       <section className={styles.hero}>
+        <div className={styles.globeStage} aria-hidden="true">
+          <ParticleGlobe />
+        </div>
         <motion.div className={styles.heroVisual} aria-hidden="true" style={{ y: heroY }}>
           <div className={styles.signalField} />
           <motion.div className={styles.heroOrb} style={{ scale: heroScale }} />
